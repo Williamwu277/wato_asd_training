@@ -2,6 +2,10 @@
 #define COSTMAP_CORE_HPP_
 
 #include "rclcpp/rclcpp.hpp"
+#include "nav_msgs/msg/occupancy_grid.hpp"
+#include "sensor_msgs/msg/laser_scan.hpp"
+#include <utility>
+#include <unordered_map>
 
 namespace robot
 {
@@ -10,15 +14,26 @@ class CostmapCore {
   public:
     // Constructor, we pass in the node's RCLCPP logger to enable logging to terminal
     explicit CostmapCore(const rclcpp::Logger& logger);
-    void createCostmap(double, resolution, int width_, int height_,
-                       geometry_msgs::msg::Pose origin_, double inflation_radius_);
-    void updateCostmap(const sensor_msgs::msg::LaserScan::SharedPtr laserScan);
 
-    nav_msgs::msg::OccupancyGrid::SharedPtr getCostmapData() const;
+    bool in_grid(int grid_x, int grid_y);
+
+    //creating costmap
+    void createCostmap(double resolution, int width, int height,
+                       geometry_msgs::msg::Pose origin, double inflation_radius, int max_cost);
+    void calculateInflationMask();
+
+    //updating costmap
+    void updateCostmap(const sensor_msgs::msg::LaserScan::SharedPtr laser_scan);
+    void inflateObstacle(int grid_x, int grid_y);
+
+    nav_msgs::msg::OccupancyGrid::SharedPtr getCostmapData() const {return costmap_data_;}
 
   private:
     rclcpp::Logger logger_;
     nav_msgs::msg::OccupancyGrid::SharedPtr costmap_data_;
+    double inflation_radius_;
+    int max_cost_;
+    std::unordered_map<std::pair<int, int>, int> inflation_mask_;
 };
 
 }  

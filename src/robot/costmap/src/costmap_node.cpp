@@ -9,10 +9,11 @@ CostmapNode::CostmapNode() : Node("costmap"), costmap_(robot::CostmapCore(this->
 resolution_ = 0.1;
 width_ = 100;
 height_ = 100;
-origin_.position.x = -5.0;
-origin_.position.y = -5.0;
+origin_.position.x = 5.0;
+origin_.position.y = 5.0;
 origin_.orientation.w = 1.0;
 inflation_radius_ = 1.0;
+max_cost_ = 50;
 {
 
   sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
@@ -22,15 +23,7 @@ inflation_radius_ = 1.0;
                 std::placeholders::_1));
   pub_ = this->create_publisher<nav_msgs::msg::OccupancyGrid>("/costmap", 10);
 
-  costmap_.createCostmap(resolution_, width_, height_, origin_, inflation_radius_);
-}
- 
-// Define the timer to publish a message every 500ms
-void CostmapNode::publishMessage() {
-  auto message = std_msgs::msg::String();
-  message.data = "Hello, ROS 2!";
-  RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
-  string_pub_->publish(message);
+  costmap_.createCostmap(resolution_, width_, height_, origin_, inflation_radius_, max_cost_);
 }
 
 void CostmapNode::laserScanCallback(const sensor_msg::LaserScan::SharedPtr msg) {

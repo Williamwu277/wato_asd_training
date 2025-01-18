@@ -27,6 +27,7 @@ class CostmapNode : public rclcpp::Node {
     int height_;
     geometry_msgs::msg::Pose origin_;
     double inflation_radius_;
+    double max_cost_;
 };
  
 #endif 
