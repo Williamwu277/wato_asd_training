@@ -3,7 +3,8 @@
 ControlNode::ControlNode(): Node("control"), control_(robot::ControlCore(this->get_logger())) :
 lookahead_distance_ = 1.0,  // Lookahead distance
 goal_tolerance_ = 0.1,     // Distance to consider the goal reached
-linear_speed_ = 0.5 {
+linear_speed_ = 0.5,
+max_steer_angle_ = 1.5 {
     // Subscribers and Publishers
     path_sub_ = this->create_subscription<nav_msgs::msg::Path>(
             "/path", 10, [this](const nav_msgs::msg::Path::SharedPtr msg) { control_.setCurrentPath(msg); });
@@ -17,7 +18,7 @@ linear_speed_ = 0.5 {
     control_timer_ = this->create_wall_timer(
             std::chrono::milliseconds(100), [this]() { controlLoop(); });
 
-    control_.createControlCore(lookahead_distance_, goal_tolerance_, linear_speed_);
+    control_.createControlCore(lookahead_distance_, goal_tolerance_, linear_speed_, max_steer_angle_);
 }
 
 void ControlNode::controlLoop() {

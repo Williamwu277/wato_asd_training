@@ -17,7 +17,7 @@ class ControlCore {
     // Constructor, we pass in the node's RCLCPP logger to enable logging to terminal
     ControlCore(const rclcpp::Logger& logger);
 
-    void createControlCore(double lookahead_distance, double goal_tolerance, double linear_speed);
+    void createControlCore(double lookahead_distance, double goal_tolerance, double linear_speed, double max_steer_angle);
     void updateControls();
 
     void setRobotOdom(const nav_msgs::msg::Odometry::SharedPtr msg) {robot_odom_ = msg;}
@@ -26,15 +26,17 @@ class ControlCore {
   
   private:
     std::optional<geometry_msgs::msg::PoseStamped> findLookaheadPoint();
-    geometry_msgs::msg::Twist computeVelocity(const geometry_msgs::msg::PoseStamped &target);
-    double computeDistance(const geometry_msgs::msg::Point &a, const geometry_msgs::msg::Point &b);
+    void computeVelocity(const geometry_msgs::msg::PoseStamped &target);
     double extractYaw(const geometry_msgs::msg::Quaternion &quat);
 
     rclcpp::Logger logger_;
+
     nav_msgs::msg::Path::SharedPtr current_path_;
+
     nav_msgs::msg::Odometry::SharedPtr robot_odom_;
     geometry_msgs::msg::Twist::SharedPtr control_data_;
 
+    double max_steer_angle_;
     double lookahead_distance_;
     double goal_tolerance_;
     double linear_speed_;

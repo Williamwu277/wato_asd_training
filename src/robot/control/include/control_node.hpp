@@ -28,6 +28,7 @@ class ControlNode : public rclcpp::Node {
     double lookahead_distance_;
     double goal_tolerance_;
     double linear_speed_;
+    double max_steer_angle;
 };
 
 #endif
