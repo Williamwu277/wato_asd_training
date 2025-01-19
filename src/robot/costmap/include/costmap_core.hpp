@@ -20,15 +20,16 @@ class CostmapCore {
     //creating costmap
     void createCostmap(double resolution, int width, int height,
                        geometry_msgs::msg::Pose origin, double inflation_radius, int max_cost);
-    void calculateInflationMask();
 
     //updating costmap
     void updateCostmap(const sensor_msgs::msg::LaserScan::SharedPtr laser_scan);
-    void inflateObstacle(int grid_x, int grid_y);
 
     nav_msgs::msg::OccupancyGrid::SharedPtr getCostmapData() const {return costmap_data_;}
 
   private:
+    void calculateInflationMask();
+    void inflateObstacle(int grid_x, int grid_y);
+
     rclcpp::Logger logger_;
     nav_msgs::msg::OccupancyGrid::SharedPtr costmap_data_;
     double inflation_radius_;

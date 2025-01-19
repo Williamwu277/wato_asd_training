@@ -11,7 +11,6 @@
 class CostmapNode : public rclcpp::Node {
   public:
     CostmapNode();
-    void get_params();
     
     // Place callback function here
     void laserScanCallback(const sensor_msg::LaserScan::SharedPtr msg);
