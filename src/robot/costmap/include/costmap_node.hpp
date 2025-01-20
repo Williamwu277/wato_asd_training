@@ -13,7 +13,7 @@ class CostmapNode : public rclcpp::Node {
     CostmapNode();
     
     // Place callback function here
-    void laserScanCallback(const sensor_msg::LaserScan::SharedPtr msg);
+    void laserScanCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg);
 
   private:
     robot::CostmapCore costmap_;

@@ -9,6 +9,14 @@
 
 namespace robot
 {
+  struct PairHash
+{
+  std::size_t operator()(const std::pair<int, int> &p) const
+  {
+    // A simple hash combining x and y
+    return std::hash<int>()(p.first) ^ (std::hash<int>()(p.second) << 1);
+  }
+};
 
 class CostmapCore {
   public:
@@ -34,7 +42,7 @@ class CostmapCore {
     nav_msgs::msg::OccupancyGrid::SharedPtr costmap_data_;
     double inflation_radius_;
     int max_cost_;
-    std::unordered_map<std::pair<int, int>, int> inflation_mask_;
+    std::unordered_map<std::pair<int, int>, int, PairHash> inflation_mask_;
 };
 
 }  

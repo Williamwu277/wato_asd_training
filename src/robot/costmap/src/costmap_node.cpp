@@ -5,7 +5,7 @@
 #include "nav_msgs/msg/occupancy_grid.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 
-CostmapNode::CostmapNode() : Node("costmap"), costmap_(robot::CostmapCore(this->get_logger())) :
+CostmapNode::CostmapNode() : Node("costmap"), costmap_(robot::CostmapCore(this->get_logger())) {
 resolution_ = 0.1;
 width_ = 100;
 height_ = 100;
@@ -14,7 +14,6 @@ origin_.position.y = 5.0;
 origin_.orientation.w = 1.0;
 inflation_radius_ = 1.0;
 max_cost_ = 50;
-{
 
   sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "/lidar", 10,
@@ -26,7 +25,7 @@ max_cost_ = 50;
   costmap_.createCostmap(resolution_, width_, height_, origin_, inflation_radius_, max_cost_);
 }
 
-void CostmapNode::laserScanCallback(const sensor_msg::LaserScan::SharedPtr msg) {
+void CostmapNode::laserScanCallback(const sensor_msgs::msg::LaserScan::SharedPtr msg) {
     costmap_.updateCostmap(msg);
     nav_msgs::msg::OccupancyGrid costmap_msg = *costmap_.getCostmapData();
     costmap_msg.header = msg->header;

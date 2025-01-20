@@ -6,7 +6,7 @@ namespace robot {
 
     CostmapCore::CostmapCore(const rclcpp::Logger& logger) :
     logger_(logger),
-    costmap_data_(std::make_shared<nav_msgs::msg::OccupancyGrid>()){}
+    costmap_data_(std::make_shared<nav_msgs::msg::OccupancyGrid>()) {}
 
     void CostmapCore::createCostmap(double resolution, int width, int height,
                                     geometry_msgs::msg::Pose origin, double inflation_radius, int max_cost) {
@@ -44,7 +44,8 @@ namespace robot {
         std::fill(costmap_data_->data.begin(), costmap_data_->data.end(), 0);
 
         double angle = laser_scan->angle_min;
-        for (int i = 0; i < laser_scan->ranges.size(); ++i, angle += laser_scan->angle_increment) {
+        for (int i = 0; i < static_cast<int>(laser_scan->ranges.size()); ++i, angle += laser_scan->angle_increment) {
+            double range = laser_scan->ranges[i];
             double x = range * std::cos(angle);
             double y = range * std::sin(angle);
             int grid_x = static_cast<int>((x + costmap_data_->info.origin.position.x) / costmap_data_->info.resolution);
@@ -63,14 +64,14 @@ namespace robot {
             int cur_y = grid_y + coords.second;
             int cur_cost = it->second;
             if (in_grid(cur_x, cur_y)) {
-                index = cur_y * costmap_data_->info.width + cur_x;
-                costmap_data_->data[index] = max(costmap_data_->data[index], cur_cost);
+                int index = cur_y * costmap_data_->info.width + cur_x;
+                costmap_data_->data[index] = std::max(costmap_data_->data[index], (int8_t) cur_cost);
             }
         }
     }
 
-    void CostmapCore::in_grid(int grid_x, int grid_y) {
-        return (grid_x >= 0 && grid_x < costmap_data_->info.width) &&
-        (grid_y >= 0 && grid_y < costmap_data_->info.height)
+    bool CostmapCore::in_grid(int grid_x, int grid_y) {
+        return (grid_x >= 0 && grid_x < static_cast<int>(costmap_data_->info.width)) &&
+        (grid_y >= 0 && grid_y < static_cast<int>(costmap_data_->info.height));
     }
 }
