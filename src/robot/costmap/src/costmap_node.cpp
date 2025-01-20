@@ -13,7 +13,7 @@ origin_.position.x = 5.0;
 origin_.position.y = 5.0;
 origin_.orientation.w = 1.0;
 inflation_radius_ = 1.0;
-max_cost_ = 50;
+max_cost_ = 100;
 
   sub_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
         "/lidar", 10,

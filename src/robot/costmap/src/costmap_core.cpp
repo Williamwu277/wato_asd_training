@@ -18,10 +18,11 @@ namespace robot {
         inflation_radius_ = inflation_radius;
         max_cost_ = max_cost;
 
-        calculateInflationMask();
+        //calculateInflationMask();
     }
 
     void CostmapCore::calculateInflationMask() {
+        /*
 
         int cell_radius = static_cast<int>(inflation_radius_ / costmap_data_->info.resolution);
 
@@ -38,6 +39,7 @@ namespace robot {
                 }
             }
         }
+        */
     }
 
     void CostmapCore::updateCostmap(const sensor_msgs::msg::LaserScan::SharedPtr laser_scan) {
@@ -58,6 +60,24 @@ namespace robot {
     }
 
     void CostmapCore::inflateObstacle(int grid_x, int grid_y) {
+        int cell_radius = static_cast<int>(inflation_radius_ / costmap_data_->info.resolution);
+
+        inflation_mask_[{grid_x, grid_y}] = 100; //obstacle;
+        for (int i = grid_x-cell_radius; i <= grid_x+cell_radius; ++i) {
+            for (int j = grid_y-cell_radius; j <= grid_y+cell_radius; ++j) {
+                if ((i == 0 && j == 0) || !in_grid(i, j)) {
+                    continue;
+                }
+                double distance = std::hypot(std::abs(i - grid_x), std::abs(j - grid_y));
+                if (distance <= cell_radius) {
+                    int cost = static_cast<int>(max_cost_*(1-distance/cell_radius));
+                    //inflation_mask_[{i, j}] = cost;
+                    int index = j * costmap_data_->info.width + i;
+                    costmap_data_->data[index] = std::max(costmap_data_->data[index], (int8_t) cost);
+                }
+            }
+        }
+        /*
         for (auto it = inflation_mask_.begin(); it != inflation_mask_.end(); ++it) {
             std::pair coords = it->first;
             int cur_x = grid_x + coords.first;
@@ -68,6 +88,7 @@ namespace robot {
                 costmap_data_->data[index] = std::max(costmap_data_->data[index], (int8_t) cur_cost);
             }
         }
+        */
     }
 
     bool CostmapCore::in_grid(int grid_x, int grid_y) {
